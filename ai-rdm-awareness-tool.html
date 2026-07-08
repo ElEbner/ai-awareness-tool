@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsible AI Use — Research Data Management</title>
+
+  <!--
+  ============================================================
+  FONTS
+  We load two fonts from Google Fonts:
+  - "DM Sans" for body text and UI elements (clean, modern)
+  - "DM Serif Display" for the main heading (editorial feel)
+  To change fonts, replace the @import URL and update the
+  font-family values in the :root section below.
+  ============================================================
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=DM+Serif+Display&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ==========================================================
+       DESIGN TOKENS
+       All colours, spacing, and typography live here.
+       Edit these variables to restyle the entire page at once.
+       ========================================================== */
+    :root {
+      --color-bg:           #f5f4f0;   /* Page background */
+      --color-surface:      #ffffff;   /* Card / panel background */
+      --color-border:       #e0ddd6;   /* Default border colour */
+      --color-border-dark:  #c8c4bb;   /* Stronger border (e.g. on hover) */
+
+      --color-text:         #1a1917;   /* Primary text */
+      --color-text-muted:   #6b6860;   /* Secondary / hint text */
+      --color-text-light:   #9c9890;   /* Very muted — labels, tags */
+
+      --color-accent:       #3d5a99;   /* Main accent (button, highlights) */
+      --color-accent-light: #e8edf7;   /* Pale accent (selected card bg) */
+
+      /* Severity badge colours */
+      --color-critical-bg:  #fdf0ee;
+      --color-critical-text:#a33020;
+      --color-high-bg:      #fdf6e8;
+      --color-high-text:    #8a5c10;
+      --color-info-bg:      #eaf3fb;
+      --color-info-text:    #1e5a8a;
+      --color-low-bg:       #eaf5ef;
+      --color-low-text:     #1a6640;
+
+      --font-body:    'DM Sans', sans-serif;
+      --font-display: 'DM Serif Display', serif;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    /* ==========================================================
+       RESET & BASE
+       Removes browser defaults and sets consistent box-sizing.
+       ========================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    /* ==========================================================
+       PAGE LAYOUT
+       A centred column with a maximum width.
+       Adjust --max-width to make the content wider or narrower.
+       ========================================================== */
+    .page-wrapper {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ==========================================================
+       HEADER
+       The title block at the top of the page.
+       ========================================================== */
+    .page-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .page-header .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-light);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header h1 {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 400;            /* Display fonts look best at regular weight */
+      line-height: 1.2;
+      color: var(--color-text);
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* ==========================================================
+       PROGRESS BAR
+       Shows which step the user is on.
+       The JS below adds the .done and .active classes.
+       ========================================================== */
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2rem;
+    }
+
+    .progress-segment {
+      height: 3px;
+      flex: 1;
+      border-radius: 2px;
+      background: var(--color-border);
+      transition: background 0.3s;
+    }
+
+    .progress-segment.done   { background: var(--color-accent); }
+    .progress-segment.active { background: #8aaad4; }  /* Lighter accent */
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      white-space: nowrap;
+    }
+
+    /* ==========================================================
+       STEPS
+       Each "step" is a section of the form. Only the active
+       step is visible; the others have display:none.
+       The JS goStep() function switches between them.
+       ========================================================== */
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .step-title {
+      font-size: 17px;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    .step-description {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .multi-hint {
+      font-size: 12px;
+      color: var(--color-text-light);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ==========================================================
+       SELECTION CARDS (Steps 1 & 2)
+       A responsive grid of clickable cards.
+       Clicking a card toggles the .selected class via JS.
+       
+       To add a new option, copy one <div class="sel-card"> block,
+       give it a new data-val, and add matching awareness content
+       in the AWARENESS_DATA object further down in the JS section.
+       ========================================================== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .sel-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+      user-select: none;           /* Prevents text highlighting on click */
+    }
+
+    .sel-card:hover {
+      border-color: var(--color-border-dark);
+      box-shadow: var(--shadow-card);
+    }
+
+    /* Selected state */
+    .sel-card.selected {
+      border-color: var(--color-accent);
+      background: var(--color-accent-light);
+    }
+
+    .sel-card .card-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .sel-card .card-label {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    .sel-card .card-sublabel {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+
+    /* ==========================================================
+       BUTTONS
+       Two variants: primary (filled) and secondary (outline).
+       ========================================================== */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 1.75rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 9px 22px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    button.btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+      border: 1px solid var(--color-accent);
+    }
+
+    button.btn-primary:hover {
+      background: #2e4680;          /* Slightly darker accent on hover */
+    }
+
+    button.btn-secondary {
+      background: var(--color-surface);
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+    }
+
+    button.btn-secondary:hover {
+      border-color: var(--color-border-dark);
+      color: var(--color-text);
+    }
+
+    /* ==========================================================
+       RESULTS PAGE — SUMMARY TAGS
+       Shows the user's selections as small pills at the top
+       of the results, so they can see what was chosen.
+       ========================================================== */
+    .summary-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .tag-data { background: var(--color-accent-light); color: var(--color-accent); }
+    .tag-use  { background: #f0ede8; color: var(--color-text-muted); }
+
+    /* ==========================================================
+       RESULTS PAGE — SECTION DIVIDERS
+       Visual headings that separate groups of awareness blocks.
+       ========================================================== */
+    .section-divider {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-light);
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 8px;
+      margin: 1.75rem 0 0.75rem;
+    }
+
+    /* ==========================================================
+       AWARENESS BLOCKS (accordion)
+       Each block is a collapsible panel with a header and body.
+       Clicking the header toggles the .open class on the body
+       via the toggleBlock() function in JS.
+       
+       To add a new awareness block, add an entry to AWARENESS_DATA
+       in the JS section — no HTML changes needed.
+       ========================================================== */
+    .awareness-block {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface);
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .awareness-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .awareness-header:hover { background: #fafaf8; }
+
+    .ah-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      width: 26px;
+      text-align: center;
+    }
+
+    .ah-title {
+      font-size: 14px;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    /* Severity badges — edit --color-*-bg and --color-*-text in :root to change */
+    .badge {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .badge-critical { background: var(--color-critical-bg); color: var(--color-critical-text); }
+    .badge-high     { background: var(--color-high-bg);     color: var(--color-high-text); }
+    .badge-info     { background: var(--color-info-bg);     color: var(--color-info-text); }
+    .badge-low      { background: var(--color-low-bg);      color: var(--color-low-text); }
+
+    /* Chevron rotates when the block is open */
+    .chevron {
+      font-size: 16px;
+      color: var(--color-text-light);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .chevron.open { transform: rotate(180deg); }
+
+    /* The collapsible body — hidden by default */
+    .awareness-body {
+      display: none;
+      border-top: 1px solid var(--color-border);
+      background: #fafaf8;
+      padding: 0 16px 14px;
+    }
+    .awareness-body.open { display: block; }
+
+    .awareness-body ul {
+      list-style: none;
+      margin-top: 10px;
+    }
+
+    .awareness-body li {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.65;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      gap: 8px;
+    }
+
+    .awareness-body li:last-child { border-bottom: none; }
+
+    /* The arrow bullet point */
+    .awareness-body li::before {
+      content: "→";
+      color: var(--color-accent);
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    /* ==========================================================
+       REGULATORY FOOTER
+       A small reference strip at the bottom of the results.
+       Add or remove entries in the HTML below.
+       ========================================================== */
+    .reg-footer {
+      margin-top: 1.5rem;
+      padding: 12px 16px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+    }
+
+    .reg-footer .reg-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--color-text-light);
+      margin-bottom: 6px;
+    }
+
+    .reg-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+    .reg-chip {
+      font-size: 11px;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 2px 9px;
+      color: var(--color-text-muted);
+    }
+
+    /* ==========================================================
+       RESPONSIVE ADJUSTMENTS
+       On small screens, shrink the heading and reduce padding.
+       ========================================================== */
+    @media (max-width: 520px) {
+      .page-wrapper { padding: 1.5rem 1rem 3rem; }
+      .page-header h1 { font-size: 1.5rem; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ============================================================
+       PAGE HEADER
+       Edit the title, eyebrow text, and description here.
+       ============================================================ -->
+  <header class="page-header">
+    <p class="eyebrow">Awareness tool</p>
+    <h1>Responsible AI Use in Research Data Management</h1>
+    <p>
+      Answer two quick questions about your data and intended task.
+      The tool will surface the most relevant guidelines, risks, and
+      obligations under European policy and research ethics frameworks.
+    </p>
+  </header>
+
+  <!-- ============================================================
+       PROGRESS BAR
+       The three segments correspond to steps 1, 2, and 3.
+       Their active/done classes are managed by JS — no edits needed here.
+       ============================================================ -->
+  <div class="progress" aria-label="Progress">
+    <div class="progress-segment active" id="ps1"></div>
+    <div class="progress-segment" id="ps2"></div>
+    <div class="progress-segment" id="ps3"></div>
+    <span class="progress-label" id="progress-label">Step 1 of 3</span>
+  </div>
+
+
+  <!-- ============================================================
+       STEP 1 — DATA TYPES
+       
+       To add a new data type option:
+       1. Copy one <div class="sel-card"> block below
+       2. Set a unique data-val (e.g. data-val="audio")
+       3. Update the label, sublabel, and icon (use any emoji)
+       4. Add matching awareness content in AWARENESS_DATA.dataTypes
+          in the JavaScript section at the bottom.
+       ============================================================ -->
+  <section class="step active" id="step1" aria-label="Step 1: Data profile">
+    <h2 class="step-title">What type of data are you working with?</h2>
+    <p class="step-description">Select all that apply. This determines which safeguards are most relevant.</p>
+    <p class="multi-hint">You may select more than one.</p>
+
+    <div class="card-grid" id="dataTypeGrid">
+
+      <div class="sel-card" data-val="personal" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">👤</div>
+        <div class="card-label">Personal data</div>
+        <div class="card-sublabel">Names, contacts, identifiers</div>
+      </div>
+
+      <div class="sel-card" data-val="sensitive" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">🔒</div>
+        <div class="card-label">Sensitive / special category</div>
+        <div class="card-sublabel">Health, ethnicity, beliefs</div>
+      </div>
+
+      <div class="sel-card" data-val="research" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">🔬</div>
+        <div class="card-label">Research / scientific data</div>
+        <div class="card-sublabel">Survey, experimental, clinical</div>
+      </div>
+
+      <div class="sel-card" data-val="copyrighted" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">©️</div>
+        <div class="card-label">Copyrighted / licensed</div>
+        <div class="card-sublabel">Publications, datasets, media</div>
+      </div>
+
+      <div class="sel-card" data-val="confidential" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">🗂️</div>
+        <div class="card-label">Confidential / proprietary</div>
+        <div class="card-sublabel">Trade secrets, unpublished work</div>
+      </div>
+
+      <div class="sel-card" data-val="public" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">🌐</div>
+        <div class="card-label">Publicly available</div>
+        <div class="card-sublabel">Open data, public records</div>
+      </div>
+
+    </div><!-- /card-grid -->
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="goStep(2)">Continue →</button>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       STEP 2 — USE CASES
+       
+       To add a new use case:
+       1. Copy one <div class="sel-card"> block below
+       2. Set a unique data-val (e.g. data-val="transcription")
+       3. Update the label and sublabel
+       4. Add matching content in AWARENESS_DATA.useCases in the JS.
+       ============================================================ -->
+  <section class="step" id="step2" aria-label="Step 2: Use case">
+    <h2 class="step-title">What do you plan to use generative AI for?</h2>
+    <p class="step-description">Select the task(s) closest to your intended use.</p>
+    <p class="multi-hint">You may select more than one.</p>
+
+    <div class="card-grid" id="useCaseGrid">
+
+      <div class="sel-card" data-val="cleaning" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">🧹</div>
+        <div class="card-label">Data cleaning</div>
+        <div class="card-sublabel">Formatting, deduplication, error correction</div>
+      </div>
+
+      <div class="sel-card" data-val="classification" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">🏷️</div>
+        <div class="card-label">Classification &amp; coding</div>
+        <div class="card-sublabel">Categorise, label, annotate</div>
+      </div>
+
+      <div class="sel-card" data-val="analysis" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">📊</div>
+        <div class="card-label">Data analysis</div>
+        <div class="card-sublabel">Pattern finding, interpretation</div>
+      </div>
+
+      <div class="sel-card" data-val="synthesis" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">📄</div>
+        <div class="card-label">Summarisation &amp; synthesis</div>
+        <div class="card-sublabel">Summarise texts or results</div>
+      </div>
+
+      <div class="sel-card" data-val="writing" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">✏️</div>
+        <div class="card-label">Writing assistance</div>
+        <div class="card-sublabel">Drafting, editing, translation</div>
+      </div>
+
+      <div class="sel-card" data-val="generation" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">✨</div>
+        <div class="card-label">Data generation</div>
+        <div class="card-sublabel">Synthetic or augmented data</div>
+      </div>
+
+      <div class="sel-card" data-val="extraction" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">🔍</div>
+        <div class="card-label">Information extraction</div>
+        <div class="card-sublabel">Entities, facts, relationships</div>
+      </div>
+
+      <div class="sel-card" data-val="search" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">📚</div>
+        <div class="card-label">Literature search</div>
+        <div class="card-sublabel">Find, screen, retrieve</div>
+      </div>
+
+    </div><!-- /card-grid -->
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(1)">← Back</button>
+      <button class="btn-primary"   onclick="goStep(3)">Show awareness points →</button>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       STEP 3 — RESULTS
+       This section is built dynamically by the buildResults()
+       function in JS. The #results-output div is the target.
+       ============================================================ -->
+  <section class="step" id="step3" aria-label="Step 3: Awareness points">
+    <h2 class="step-title">Key considerations for your scenario</h2>
+    <p class="step-description">Expand each panel to read the relevant guidance.</p>
+
+    <!-- Summary tags — filled by JS -->
+    <div class="summary-tags" id="summary-tags"></div>
+
+    <!-- Awareness blocks — built by JS -->
+    <div id="results-output"></div>
+
+    <!-- Regulatory reference footer -->
+    <div class="reg-footer">
+      <div class="reg-label">Relevant frameworks &amp; policies</div>
+      <div class="reg-chips">
+        <!--
+          Add or remove chips here to reflect the frameworks
+          covered by your institution or region.
+        -->
+        <span class="reg-chip">GDPR (2016/679)</span>
+        <span class="reg-chip">EU AI Act (2024/1689)</span>
+        <span class="reg-chip">EU Copyright Directive (2019/790)</span>
+        <span class="reg-chip">NIS2 Directive</span>
+        <span class="reg-chip">Horizon Europe Ethics Guidelines</span>
+        <span class="reg-chip">ALLEA Code of Conduct</span>
+        <span class="reg-chip">DFG / NWO / UKRI AI policies</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(2)">← Adjust selections</button>
+      <button class="btn-primary"   onclick="goStep(1)">Start again</button>
+    </div>
+  </section>
+
+</div><!-- /page-wrapper -->
+
+
+<!-- ==================================================================
+     JAVASCRIPT
+     All the tool logic lives here. There are three main parts:
+     
+     1. STATE — tracks the user's selections
+     2. AWARENESS_DATA — the content shown in results (edit this!)
+     3. FUNCTIONS — step navigation, card toggling, results building
+     ================================================================== -->
+<script>
+
+/* ------------------------------------------------------------------
+   1. STATE
+   Two Sets that track which cards the user has selected.
+   A Set is like an array but automatically avoids duplicates.
+   ------------------------------------------------------------------ */
+const state = {
+  dataTypes: new Set(),   // e.g. { "personal", "sensitive" }
+  useCases:  new Set()    // e.g. { "cleaning", "analysis" }
+};
+
+
+/* ------------------------------------------------------------------
+   2. AWARENESS DATA
+   This is the main content database. Each entry has:
+
+   - title:     Displayed as the accordion header
+   - icon:      An emoji shown next to the title
+   - badge:     Short severity label (e.g. "Critical", "Important")
+   - badgeClass: CSS class controlling badge colour — options are:
+                 "badge-critical" | "badge-high" | "badge-info" | "badge-low"
+   - items:     Array of strings — the bullet points shown when expanded
+
+   HOW TO ADD NEW CONTENT:
+   - To add a new data type awareness block, add an entry under
+     AWARENESS_DATA.dataTypes using the same key as data-val in HTML.
+   - To add a new use case block, add under AWARENESS_DATA.useCases.
+   - The "always" array is shown regardless of selection.
+   
+   To EDIT existing points, simply update the strings in `items`.
+   ------------------------------------------------------------------ */
+const AWARENESS_DATA = {
+
+  /* Shown on every results page, regardless of selections */
+  always: [
+    {
+      title: "Transparency & reproducibility",
+      icon: "👁️",
+      badge: "Research integrity",
+      badgeClass: "badge-info",
+      items: [
+        "Document all AI tools used, including model name, version, and the prompts you applied — treat this as part of your methods section.",
+        "Describe AI-assisted steps in your data management plan (DMP) and in any resulting publications.",
+        "AI outputs must be verifiable; never rely solely on AI-generated results without independent human validation.",
+        "Follow your institution's and funder's AI disclosure policies (e.g. Horizon Europe guidelines require explicit AI use statements)."
+      ]
+    },
+    {
+      title: "Human oversight & accountability",
+      icon: "✅",
+      badge: "Core requirement",
+      badgeClass: "badge-info",
+      items: [
+        "Maintain meaningful human oversight at all stages — AI must support researcher judgment, not replace it.",
+        "You remain legally and ethically responsible for the accuracy and integrity of all outputs, including AI-generated ones.",
+        "Establish a clear review process before acting on AI-generated classifications, analyses, or recommendations.",
+        "Under the EU AI Act (2024), researchers using AI systems may be classified as 'deployers' with associated obligations, depending on the risk tier of the system."
+      ]
+    }
+  ],
+
+  /* Triggered by the user's data type selection (Step 1) */
+  dataTypes: {
+
+    personal: {
+      title: "Personal data — GDPR obligations",
+      icon: "👤",
+      badge: "High priority",
+      badgeClass: "badge-high",
+      items: [
+        "Inputting personal data into commercial AI systems may constitute a data transfer — verify your legal basis under GDPR Art. 6 before proceeding.",
+        "Confirm whether the AI provider acts as a data processor; if so, a Data Processing Agreement (DPA) is legally required.",
+        "Avoid entering directly identifiable data into AI tools unless strictly necessary — pseudonymise or anonymise first.",
+        "Assess whether a Data Protection Impact Assessment (DPIA) is required before starting AI-assisted processing.",
+        "Personal data must not be sent to AI systems hosted outside the EEA without adequate safeguards (GDPR Chapter V)."
+      ]
+    },
+
+    sensitive: {
+      title: "Special category data — GDPR Art. 9",
+      icon: "🔒",
+      badge: "Critical",
+      badgeClass: "badge-critical",
+      items: [
+        "Processing health, ethnic origin, religious, or biometric data requires an explicit legal basis under GDPR Art. 9 — not just a general basis.",
+        "This category of data must not be entered into AI tools without explicit written approval from your institution's Data Protection Officer (DPO).",
+        "A DPIA is almost always mandatory when processing special category data with AI tools.",
+        "Consider whether AI processing introduces discriminatory risk — document your risk assessment and mitigation measures.",
+        "Ethics committee approval may be required before any AI-assisted processing begins."
+      ]
+    },
+
+    research: {
+      title: "Research data governance",
+      icon: "🔬",
+      badge: "Important",
+      badgeClass: "badge-high",
+      items: [
+        "Research data shared with AI systems must comply with the scope of participant consent — check whether your consent forms cover AI-assisted processing.",
+        "Many legacy consent forms do not mention AI — if yours does not, seek ethics committee guidance before proceeding.",
+        "Follow FAIR principles: AI use should not compromise the Findability, Accessibility, Interoperability, or Reusability of your data.",
+        "Funder mandates (e.g. DFG, NWO, ERC) may have specific provisions on AI tool use — check your grant agreement."
+      ]
+    },
+
+    copyrighted: {
+      title: "Copyright & intellectual property",
+      icon: "©️",
+      badge: "Important",
+      badgeClass: "badge-high",
+      items: [
+        "Inputting copyrighted texts into AI systems for processing may implicate the EU Copyright Directive (2019/790).",
+        "Text and data mining (TDM) exceptions in EU law may apply to non-commercial research, but verify your specific use case and jurisdiction.",
+        "AI-generated outputs derived from copyrighted material may not themselves be protected by copyright — this affects authorship and IP ownership.",
+        "Check the licensing terms of any dataset: confirm whether AI-assisted transformation or redistribution is permitted.",
+        "Outputs from AI models trained on proprietary or restricted data may themselves carry licence restrictions."
+      ]
+    },
+
+    confidential: {
+      title: "Confidentiality & data security",
+      icon: "🗂️",
+      badge: "Important",
+      badgeClass: "badge-high",
+      items: [
+        "Confidential or unpublished research data must not be entered into cloud-based AI systems without explicit institutional approval.",
+        "Many AI providers' terms of service allow use of submitted data for model training — review these carefully before use.",
+        "Use institutional or on-premise AI deployments where confidentiality is a requirement.",
+        "Notify your Data Protection Officer (DPO) or research data manager before processing confidential data with any external AI tool."
+      ]
+    },
+
+    public: {
+      title: "Publicly available data — residual risks",
+      icon: "🌐",
+      badge: "Lower risk",
+      badgeClass: "badge-low",
+      items: [
+        "Even public data may carry licence conditions (e.g. Creative Commons NC clauses) that restrict AI-assisted or commercial uses.",
+        "Web-scraped data may be subject to database rights or website terms of service that prohibit automated processing.",
+        "Combining multiple public datasets can re-identify individuals — assess aggregation risk before proceeding.",
+        "Ensure provenance is fully documented: cite original sources even when AI helps you process or summarise them."
+      ]
+    }
+
+  }, /* end dataTypes */
+
+  /* Triggered by the user's use case selection (Step 2) */
+  useCases: {
+
+    cleaning: {
+      title: "Data cleaning",
+      icon: "🧹",
+      badge: "Accuracy risk",
+      badgeClass: "badge-high",
+      items: [
+        "AI may silently introduce errors during formatting or correction — always compare AI-cleaned data against the original using a diff or audit log.",
+        "Avoid passing personal identifiers to AI for deduplication; use surrogate keys or anonymised representations where possible.",
+        "Document all cleaning rules and transformations applied by AI in your data provenance record.",
+        "AI imputation of missing values must be clearly flagged in your dataset — never treat imputed values as observed data."
+      ]
+    },
+
+    classification: {
+      title: "Classification & coding",
+      icon: "🏷️",
+      badge: "Bias risk",
+      badgeClass: "badge-high",
+      items: [
+        "AI classifiers may reflect biases present in their training data — validate outputs across diverse demographic subgroups.",
+        "Report inter-rater reliability between AI and human coders; document disagreements and how they were resolved.",
+        "Classification schemes applied by AI must be reproducible — save and version your prompts as part of your methods.",
+        "Do not use AI to classify special category attributes (e.g. ethnicity, health status) without prior ethics committee approval."
+      ]
+    },
+
+    analysis: {
+      title: "Data analysis",
+      icon: "📊",
+      badge: "Validity risk",
+      badgeClass: "badge-high",
+      items: [
+        "AI-identified patterns are hypotheses to investigate, not confirmed findings — validate them with appropriate statistical methods.",
+        "AI models can hallucinate statistical results; never report numeric outputs without independent verification against raw data.",
+        "Be explicit about AI's role in analysis in any publication — vague attribution inflates apparent methodological rigour.",
+        "Consider whether AI-assisted analysis constitutes automated decision-making under GDPR Art. 22 in applied or clinical contexts."
+      ]
+    },
+
+    synthesis: {
+      title: "Summarisation & synthesis",
+      icon: "📄",
+      badge: "Accuracy risk",
+      badgeClass: "badge-high",
+      items: [
+        "AI summaries may omit nuance, minority findings, or contradictory evidence — cross-check against the original source material.",
+        "Never submit AI-generated literature summaries in grant applications or publications without full human review and revision.",
+        "Hallucinated citations are a documented and common risk — verify every reference produced or suggested by AI individually.",
+        "For systematic reviews, disclose AI assistance per PRISMA-AI or equivalent reporting guidelines."
+      ]
+    },
+
+    writing: {
+      title: "Writing assistance",
+      icon: "✏️",
+      badge: "Integrity risk",
+      badgeClass: "badge-high",
+      items: [
+        "Do not submit AI-generated text as your own without disclosure — check your institution's academic integrity and misconduct policy.",
+        "AI writing tools must not be listed as authors; authorship requires accountability and the ability to defend the work (ICMJE guidelines).",
+        "Avoid entering confidential or personal data into writing assistants as context — use anonymised placeholders instead.",
+        "AI-translated text should always be reviewed by a human fluent in the target language before dissemination.",
+        "Many journals and funders now require explicit AI use disclosure in manuscript submissions — check the submission guidelines."
+      ]
+    },
+
+    generation: {
+      title: "Synthetic data generation",
+      icon: "✨",
+      badge: "High scrutiny",
+      badgeClass: "badge-critical",
+      items: [
+        "Synthetic data derived from personal data is still subject to GDPR unless you can demonstrate that re-identification risk is negligible.",
+        "Validate that synthetic datasets preserve the statistical properties relevant to your research question before using them.",
+        "Label all synthetic data clearly in datasets and publications — never mix synthetic and real observations without explicit distinction.",
+        "AI-generated data used in further model training can amplify existing biases — test for distributional shift.",
+        "Under the EU AI Act, using synthetic data in high-risk AI systems may trigger additional conformity assessment requirements."
+      ]
+    },
+
+    extraction: {
+      title: "Information extraction",
+      icon: "🔍",
+      badge: "Accuracy risk",
+      badgeClass: "badge-high",
+      items: [
+        "Extracting named entities (names, locations, relationships) from personal documents requires a valid GDPR legal basis.",
+        "Measure and report AI extraction error rates — precision and recall matter for downstream research validity.",
+        "Extracted personal information must be stored and handled with the same protections as the source documents.",
+        "Domain-specific terminology can confuse general-purpose extraction models — validate on a manually annotated test set."
+      ]
+    },
+
+    search: {
+      title: "Literature & knowledge search",
+      icon: "📚",
+      badge: "Reliability risk",
+      badgeClass: "badge-info",
+      items: [
+        "AI-assisted screening does not replace a systematic search strategy — document your search terms and inclusion criteria explicitly.",
+        "AI tools have training data cutoff dates; always supplement AI-assisted searches with current database queries (e.g. PubMed, Scopus).",
+        "AI recommendations may reflect popularity or citation bias rather than relevance — apply independent critical appraisal.",
+        "When AI is used in systematic reviews or meta-analyses, report this using PRISMA-AI or equivalent standards."
+      ]
+    }
+
+  } /* end useCases */
+
+}; /* end AWARENESS_DATA */
+
+
+/* ------------------------------------------------------------------
+   3. FUNCTIONS
+
+   toggleCard(el, key)  — handles card selection / deselection
+   goStep(n)            — moves between steps 1, 2, 3
+   toggleBlock(header)  — expands / collapses an accordion panel
+   buildResults()       — generates the Step 3 output from selections
+   makeBlock(item)      — creates the HTML for one awareness block
+   ------------------------------------------------------------------ */
+
+/**
+ * toggleCard
+ * Called when a selection card is clicked.
+ * Adds or removes the visual 'selected' class and
+ * updates the corresponding Set in state.
+ *
+ * @param {HTMLElement} el  - The card element that was clicked
+ * @param {string}      key - Either 'dataTypes' or 'useCases'
+ */
+function toggleCard(el, key) {
+  const val = el.dataset.val;
+  el.classList.toggle('selected');
+
+  if (state[key].has(val)) {
+    state[key].delete(val);   // Deselect: remove from Set
+  } else {
+    state[key].add(val);      // Select: add to Set
+  }
+}
+
+
+/**
+ * goStep
+ * Hides all steps, shows the target step, and updates the progress bar.
+ * If navigating to Step 3, calls buildResults() to generate content.
+ *
+ * @param {number} n - Target step number (1, 2, or 3)
+ */
+function goStep(n) {
+  // Hide all steps
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+  // Show the target step
+  document.getElementById('step' + n).classList.add('active');
+
+  // Update progress bar segments
+  ['ps1', 'ps2', 'ps3'].forEach((id, i) => {
+    const seg = document.getElementById(id);
+    seg.className = 'progress-segment';               // Reset all
+    if (i + 1 < n)  seg.classList.add('done');        // Past steps
+    if (i + 1 === n) seg.classList.add('active');     // Current step
+  });
+
+  // Update the step counter text
+  document.getElementById('progress-label').textContent = `Step ${n} of 3`;
+
+  // Build results only when entering Step 3
+  if (n === 3) buildResults();
+
+  // Scroll to top of page when navigating
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+/**
+ * toggleBlock
+ * Expands or collapses an accordion awareness block.
+ * Called by onclick on the .awareness-header element.
+ *
+ * @param {HTMLElement} header - The header element that was clicked
+ */
+function toggleBlock(header) {
+  const body    = header.nextElementSibling;    // The .awareness-body div
+  const chevron = header.querySelector('.chevron');
+  const isOpen  = body.classList.contains('open');
+
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  header.setAttribute('aria-expanded', String(!isOpen));
+}
+
+
+/**
+ * makeBlock
+ * Builds the HTML string for one accordion awareness block.
+ * Called by buildResults() for each item in AWARENESS_DATA.
+ *
+ * @param {Object} item - An entry from AWARENESS_DATA
+ * @returns {string} HTML string for the block
+ */
+function makeBlock(item) {
+  // Build the bullet points as <li> elements
+  const bullets = item.items
+    .map(text => `<li>${text}</li>`)
+    .join('');
+
+  return `
+    <div class="awareness-block">
+      <div class="awareness-header"
+           onclick="toggleBlock(this)"
+           aria-expanded="false">
+        <span class="ah-icon">${item.icon}</span>
+        <span class="ah-title">${item.title}</span>
+        <span class="badge ${item.badgeClass}">${item.badge}</span>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="awareness-body" role="region">
+        <ul>${bullets}</ul>
+      </div>
+    </div>`;
+}
+
+
+/**
+ * buildResults
+ * Generates the full Step 3 output:
+ * 1. Summary tags (showing the user's selections)
+ * 2. "Always required" awareness blocks
+ * 3. Data-type-specific blocks (based on Step 1 selections)
+ * 4. Use-case-specific blocks (based on Step 2 selections)
+ *
+ * This function is called automatically when the user enters Step 3.
+ */
+function buildResults() {
+  /* --- Summary tags --- */
+  const tagsEl = document.getElementById('summary-tags');
+  tagsEl.innerHTML = '';
+
+  // Labels for display (maps data-val to a readable name)
+  const dataLabels = {
+    personal: 'Personal data', sensitive: 'Sensitive data',
+    research: 'Research data', copyrighted: 'Copyrighted material',
+    confidential: 'Confidential data', public: 'Public data'
+  };
+  const useLabels = {
+    cleaning: 'Data cleaning', classification: 'Classification',
+    analysis: 'Data analysis', synthesis: 'Summarisation',
+    writing: 'Writing', generation: 'Synthetic data',
+    extraction: 'Extraction', search: 'Literature search'
+  };
+
+  state.dataTypes.forEach(val => {
+    tagsEl.innerHTML += `<span class="tag tag-data">${dataLabels[val] || val}</span>`;
+  });
+  state.useCases.forEach(val => {
+    tagsEl.innerHTML += `<span class="tag tag-use">${useLabels[val] || val}</span>`;
+  });
+
+  /* --- Build awareness blocks --- */
+  const output = document.getElementById('results-output');
+  output.innerHTML = '';   // Clear any previous results
+
+  // Helper to insert a section divider heading
+  function addDivider(text) {
+    output.innerHTML += `<div class="section-divider">${text}</div>`;
+  }
+
+  // 1. Always-required blocks
+  addDivider('Always required');
+  AWARENESS_DATA.always.forEach(item => {
+    output.innerHTML += makeBlock(item);
+  });
+
+  // 2. Data-type blocks — only if the user selected something
+  if (state.dataTypes.size > 0) {
+    addDivider('Based on your data types');
+    state.dataTypes.forEach(val => {
+      const item = AWARENESS_DATA.dataTypes[val];
+      if (item) output.innerHTML += makeBlock(item);
+    });
+  }
+
+  // 3. Use-case blocks — only if the user selected something
+  if (state.useCases.size > 0) {
+    addDivider('Based on your use cases');
+    state.useCases.forEach(val => {
+      const item = AWARENESS_DATA.useCases[val];
+      if (item) output.innerHTML += makeBlock(item);
+    });
+  }
+}
+
+</script>
+</body>
+</html>
