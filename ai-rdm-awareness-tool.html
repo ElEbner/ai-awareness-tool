@@ -28,13 +28,13 @@
        Edit these variables to restyle the entire page at once.
        ========================================================== */
     :root {
-      --color-bg:           #f5f4f0;   /* Page background */
+      --color-bg:           #e9f3f8;   /* Page background */
       --color-surface:      #ffffff;   /* Card / panel background */
       --color-border:       #e0ddd6;   /* Default border colour */
       --color-border-dark:  #c8c4bb;   /* Stronger border (e.g. on hover) */
 
       --color-text:         #1a1917;   /* Primary text */
-      --color-text-muted:   #6b6860;   /* Secondary / hint text */
+      --color-text-muted:   #5b5954;   /* Secondary / hint text */
       --color-text-light:   #9c9890;   /* Very muted — labels, tags */
 
       --color-accent:       #3d5a99;   /* Main accent (button, highlights) */
@@ -81,7 +81,7 @@
        Adjust --max-width to make the content wider or narrower.
        ========================================================== */
     .page-wrapper {
-      max-width: 740px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 2.5rem 1.5rem 4rem;
     }
@@ -105,7 +105,7 @@
 
     .page-header h1 {
       font-family: var(--font-display);
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 400;            /* Display fonts look best at regular weight */
       line-height: 1.2;
       color: var(--color-text);
@@ -115,7 +115,7 @@
     .page-header p {
       font-size: 14px;
       color: var(--color-text-muted);
-      max-width: 560px;
+      max-width: 900px;
       line-height: 1.7;
     }
 
@@ -158,21 +158,15 @@
     .step.active { display: block; }
 
     .step-title {
-      font-size: 17px;
+      font-size: 20px;
       font-weight: 500;
       margin-bottom: 0.3rem;
     }
 
     .step-description {
-      font-size: 13px;
+      font-size: 15px;
       color: var(--color-text-muted);
       margin-bottom: 0.5rem;
-    }
-
-    .multi-hint {
-      font-size: 12px;
-      color: var(--color-text-light);
-      margin-bottom: 1.25rem;
     }
 
     /* ==========================================================
@@ -186,7 +180,7 @@
        ========================================================== */
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 10px;
       margin-bottom: 1.5rem;
     }
@@ -218,16 +212,21 @@
     }
 
     .sel-card .card-label {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 500;
       line-height: 1.3;
     }
 
     .sel-card .card-sublabel {
-      font-size: 11px;
+      font-size: 13px;
       color: var(--color-text-muted);
       margin-top: 3px;
       line-height: 1.35;
+    }
+    
+    ul, ol {
+      list-style-position: outside;
+      padding-left: 15px;
     }
 
     /* ==========================================================
@@ -414,6 +413,7 @@
        Add or remove entries in the HTML below.
        ========================================================== */
     .reg-footer {
+      font-size: 11px;
       margin-top: 1.5rem;
       padding: 12px 16px;
       background: var(--color-surface);
@@ -428,17 +428,6 @@
       letter-spacing: 0.07em;
       color: var(--color-text-light);
       margin-bottom: 6px;
-    }
-
-    .reg-chips { display: flex; flex-wrap: wrap; gap: 5px; }
-
-    .reg-chip {
-      font-size: 11px;
-      background: var(--color-bg);
-      border: 1px solid var(--color-border);
-      border-radius: 20px;
-      padding: 2px 9px;
-      color: var(--color-text-muted);
     }
 
     /* ==========================================================
@@ -464,9 +453,16 @@
     <p class="eyebrow">Awareness tool</p>
     <h1>Responsible AI Use in Research Data Management</h1>
     <p>
-      Answer two quick questions about your data and intended task.
-      The tool will surface the most relevant guidelines, risks, and
-      obligations under European policy and research ethics frameworks.
+      This tool is intended to provide you with advice on responsible practices for processing research data with the help of AI tools, adjusted to your research.
+    </p>
+    <br>
+    <p>
+      Answer two quick questions about your data types and your intended tasks, and you will be presented with relevant awareness points for the selected data types and use cases, with reference to relevant guidelines from publishers, Norwegian research institutions and the European Commission, as well as to European law and research ethics frameworks. 
+    </p>
+    <br>
+    <p>
+      These recommendations apply mainly to the use of general purpose large language models (LLM), which can process a variety of data formats such as text, audio, images and video. The terms “AI tool” and “AI service” used in these recommendations refers to LLMs and services that incorporate LLMs, such as AI-assisted search engines and software, as well as machine learning tools for speech recognition and transcription. <br>
+      Note that the data types and tasks presented here are not comprehensive, and do not cover development or training of AI models.
     </p>
   </header>
 
@@ -495,45 +491,44 @@
        ============================================================ -->
   <section class="step active" id="step1" aria-label="Step 1: Data profile">
     <h2 class="step-title">What type of data are you working with?</h2>
-    <p class="step-description">Select all that apply. This determines which safeguards are most relevant.</p>
-    <p class="multi-hint">You may select more than one.</p>
+    <p class="step-description">Select all data types that apply. This determines which safeguards are most relevant.</p>
 
     <div class="card-grid" id="dataTypeGrid">
 
-      <div class="sel-card" data-val="personal" onclick="toggleCard(this, 'dataTypes')">
-        <div class="card-icon">👤</div>
-        <div class="card-label">Personal data</div>
-        <div class="card-sublabel">Names, contacts, identifiers</div>
-      </div>
-
-      <div class="sel-card" data-val="sensitive" onclick="toggleCard(this, 'dataTypes')">
-        <div class="card-icon">🔒</div>
-        <div class="card-label">Sensitive / special category</div>
-        <div class="card-sublabel">Health, ethnicity, beliefs</div>
-      </div>
-
-      <div class="sel-card" data-val="research" onclick="toggleCard(this, 'dataTypes')">
+      <div class="sel-card" data-val="collected" onclick="toggleCard(this, 'dataTypes')">
         <div class="card-icon">🔬</div>
-        <div class="card-label">Research / scientific data</div>
-        <div class="card-sublabel">Survey, experimental, clinical</div>
-      </div>
-
-      <div class="sel-card" data-val="copyrighted" onclick="toggleCard(this, 'dataTypes')">
-        <div class="card-icon">©️</div>
-        <div class="card-label">Copyrighted / licensed</div>
-        <div class="card-sublabel">Publications, datasets, media</div>
-      </div>
-
-      <div class="sel-card" data-val="confidential" onclick="toggleCard(this, 'dataTypes')">
-        <div class="card-icon">🗂️</div>
-        <div class="card-label">Confidential / proprietary</div>
-        <div class="card-sublabel">Trade secrets, unpublished work</div>
+        <div class="card-label">Newly collected data</div>
+        <div class="card-sublabel">Experiments, surveys, observations, interviews, ...</div>
       </div>
 
       <div class="sel-card" data-val="public" onclick="toggleCard(this, 'dataTypes')">
         <div class="card-icon">🌐</div>
         <div class="card-label">Publicly available</div>
         <div class="card-sublabel">Open data, public records</div>
+      </div>
+
+      <div class="sel-card" data-val="personal" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">👤</div>
+        <div class="card-label">Personal data</div>
+        <div class="card-sublabel">Names, contacts, identifiers, IP address, ...</div>
+      </div>
+
+      <div class="sel-card" data-val="sensitive" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">🔒</div>
+        <div class="card-label">Sensitive data</div>
+        <div class="card-sublabel">Health information, ethnicity, political views, ...</div>
+      </div>
+
+      <div class="sel-card" data-val="copyrighted" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">©️</div>
+        <div class="card-label">Copyrighted / licensed data</div>
+        <div class="card-sublabel">Publications, datasets, media</div>
+      </div>
+
+      <div class="sel-card" data-val="confidential" onclick="toggleCard(this, 'dataTypes')">
+        <div class="card-icon">🗂️</div>
+        <div class="card-label">Confidential / proprietary data</div>
+        <div class="card-sublabel">Unpublished work, trade secrets, ...</div>
       </div>
 
     </div><!-- /card-grid -->
@@ -555,57 +550,84 @@
        ============================================================ -->
   <section class="step" id="step2" aria-label="Step 2: Use case">
     <h2 class="step-title">What do you plan to use generative AI for?</h2>
-    <p class="step-description">Select the task(s) closest to your intended use.</p>
-    <p class="multi-hint">You may select more than one.</p>
+    <p class="step-description">Select the task(s) closest to your intended use. You may select more than one.</p>
 
     <div class="card-grid" id="useCaseGrid">
 
       <div class="sel-card" data-val="cleaning" onclick="toggleCard(this, 'useCases')">
         <div class="card-icon">🧹</div>
-        <div class="card-label">Data cleaning</div>
-        <div class="card-sublabel">Formatting, deduplication, error correction</div>
+        <div class="card-label">Data preparation &amp; cleaning</div>
+        <div class="card-sublabel">
+          <ul>
+            <li>Transcribing audio/video recordings</li>
+            <li>Deduplication</li>
+            <li>Formatting</li>
+            <li>Error correction</li>
+          </ul>
+        </div>
       </div>
 
       <div class="sel-card" data-val="classification" onclick="toggleCard(this, 'useCases')">
         <div class="card-icon">🏷️</div>
-        <div class="card-label">Classification &amp; coding</div>
-        <div class="card-sublabel">Categorise, label, annotate</div>
+        <div class="card-label">Classification / text coding</div>
+        <div class="card-sublabel">
+          <ul>
+            <li>Theme extraction</li>
+            <li>Open coding</li>
+            <li>Categorisation</li>
+            <li>Labelling</li>
+          </ul>
+        </div>
       </div>
 
       <div class="sel-card" data-val="analysis" onclick="toggleCard(this, 'useCases')">
         <div class="card-icon">📊</div>
         <div class="card-label">Data analysis</div>
-        <div class="card-sublabel">Pattern finding, interpretation</div>
+        <div class="card-sublabel">
+          <ul>
+            <li>Create/edit software code for data analysis</li>
+            <li>Create/edit simulation software code</li>
+            <li>Create/modify scientific figures or images</li>
+            <li>Satistical data analysis</li>
+            <li>Pattern recognition in data</li>
+          </ul>
+        </div>
       </div>
 
-      <div class="sel-card" data-val="synthesis" onclick="toggleCard(this, 'useCases')">
-        <div class="card-icon">📄</div>
-        <div class="card-label">Summarisation &amp; synthesis</div>
-        <div class="card-sublabel">Summarise texts or results</div>
+      <div class="sel-card" data-val="review" onclick="toggleCard(this, 'useCases')">
+        <div class="card-icon">📚</div>
+        <div class="card-label">Literature review</div>
+        <div class="card-sublabel">
+          <ul>
+            <li>Searching for publications</li>
+            <li>Data extraction</li>
+            <li>Summarisation and synthesis</li>
+          </ul>
+        </div>
       </div>
 
       <div class="sel-card" data-val="writing" onclick="toggleCard(this, 'useCases')">
         <div class="card-icon">✏️</div>
         <div class="card-label">Writing assistance</div>
-        <div class="card-sublabel">Drafting, editing, translation</div>
+        <div class="card-sublabel">
+          <ul>
+            <li>Create structure/draft for a research article</li>
+            <li>Propose title, abstract or keywords for articles</li>
+            <li>Improve article readability and/or language</li>
+            <li>Translate research papers into different language</li>
+          </ul>
+        </div>
       </div>
 
-      <div class="sel-card" data-val="generation" onclick="toggleCard(this, 'useCases')">
-        <div class="card-icon">✨</div>
-        <div class="card-label">Data generation</div>
-        <div class="card-sublabel">Synthetic or augmented data</div>
-      </div>
-
-      <div class="sel-card" data-val="extraction" onclick="toggleCard(this, 'useCases')">
+      <div class="sel-card" data-val="peer" onclick="toggleCard(this, 'useCases')">
         <div class="card-icon">🔍</div>
-        <div class="card-label">Information extraction</div>
-        <div class="card-sublabel">Entities, facts, relationships</div>
-      </div>
-
-      <div class="sel-card" data-val="search" onclick="toggleCard(this, 'useCases')">
-        <div class="card-icon">📚</div>
-        <div class="card-label">Literature search</div>
-        <div class="card-sublabel">Find, screen, retrieve</div>
+        <div class="card-label">Peer review</div>
+        <div class="card-sublabel">
+          <ul>
+            <li>Identify strengths and weaknesses in a manuscript</li>
+            <li>Help write review reports</li>
+          </ul>
+        </div>
       </div>
 
     </div><!-- /card-grid -->
@@ -634,19 +656,35 @@
 
     <!-- Regulatory reference footer -->
     <div class="reg-footer">
-      <div class="reg-label">Relevant frameworks &amp; policies</div>
+      <div class="reg-label">References &amp; further reading</div>
       <div class="reg-chips">
-        <!--
-          Add or remove chips here to reflect the frameworks
-          covered by your institution or region.
-        -->
-        <span class="reg-chip">GDPR (2016/679)</span>
-        <span class="reg-chip">EU AI Act (2024/1689)</span>
-        <span class="reg-chip">EU Copyright Directive (2019/790)</span>
-        <span class="reg-chip">NIS2 Directive</span>
-        <span class="reg-chip">Horizon Europe Ethics Guidelines</span>
-        <span class="reg-chip">ALLEA Code of Conduct</span>
-        <span class="reg-chip">DFG / NWO / UKRI AI policies</span>
+        <ol id="references">
+          <li id="cite_1">European Commission. <a href="https://european-research-area.ec.europa.eu/news/living-guidelines-responsible-use-generative-ai-research-published">Living guidelines on the responsible use of generative AI in research: ERA Forum Stakeholders' document.</a> 2026 </li>
+          <li id="cite_2">Springer. <a href="https://preview.springer.com/gp/editorial-policies/artificial-intelligence--ai-/25428500">Artificial Intelligence (AI)</a></li>
+          <li id="cite_3">Wiley. <a href="https://www.wiley.com/en-us/publish/article/ai-guidelines/">AI guidelines for researchers</a></li>
+          <li id="cite_4">Norwegian University of Science and Technology (NTNU). <a href="https://i.ntnu.no/wiki/-/wiki/English/Use+of+ICT+tools+with+generative+artificial+intelligence+at+NTNU+-+policy">Use of ICT tools with generative artificial intelligence at NTNU.</a></li>
+          <li id="cite_5">European Parliament & Council. <a href="http://data.europa.eu/eli/reg/2024/1689/oj">Artificial Intelligence Act.</a> 2024</li>
+          <li id="cite_6">Guetterman TC, James TG, DeJonckheere M. Ethical considerations for the use of artificial intelligence in qualitative research: Questions for researchers, ethics boards, and reviewers. Methods Psychol. 2026;15. doi: <a href="https://doi.org/10.1016/j.metip.2026.100266">10.1016/j.metip.2026.100266</a></li>
+          <li id="cite_7">Anthropic. <a href="https://www.anthropic.com/legal/privacy">Privacy Policy</a></li>
+          <li id="cite_8">OpenAI. <a href="https://openai.com/policies/eu-privacy-policy/">Europe privacy policy</a></li>
+          <li id="cite_9">Elsevier. <a href="https://www.elsevier.com/about/policies-and-standards/generative-ai-policies-for-journals">Generative AI policies for journals.</a></li>
+          <li id="cite_10">National Committee for Research Ethics in the Social Sciences and the Humanities (NESH). <a href="https://www.forskningsetikk.no/en/guidelines/social-sciences-and-humanities/guidelines-for-research-ethics-in-the-social-sciences-and-the-humanities/">Guidelines for Research Ethics in the Social Sciences and the Humanities.</a> 2022.</li>
+          <li id="cite_11">European Parliament & Council. <a href="https://eur-lex.europa.eu/eli/reg/2016/679/2016-05-04/eng">General Data Protection Regulation (GDPR).</a> 2016</li>
+          <li id="cite_12">Lermen S, Paleka D, Swanson J, Aerni M, Carlini N, Tramèr F. <a href="http://arxiv.org/abs/2602.16800">Large-scale online deanonymization with LLMs. </a>2026</li>
+          <li id="cite_13">Chauvette A, Schick-Makaroff K, Molzahn AE. Open Data in Qualitative Research. Int J Qual Methods. 2019;18. doi: <a href="https://doi.org/10.1177/1609406918823863">10.1177/1609406918823863</a></li>
+          <li id="cite_14">University of Oslo. <a href="https://www.uio.no/english/services/ai/guidelines.html">Legal guidelines for the use of Artificial Intelligence (AI) at the University of Oslo. </a>2024</li>
+          <li id="cite_15">UiT The Arctic University of Norway. <a href="https://en.uit.no/om/kunstigintelligens">Use of artificial intelligence.</a></li>
+          <li id="cite_16">OsloMet. <a href="https://ansatt.oslomet.no/ki-forskning">Use of AI tools in research. </a>2024</li>
+          <li id="cite_17">Datatilsynet. <a href="https://www.datatilsynet.no/rettigheter-og-plikter/virksomhetenes-plikter/vurdering-av-personvernkonsekvenser/">Veiledning om DPIA. </a></li>
+          <li id="cite_18">Milenkoski M. <a href="https://gdprlocal.com/conducting-a-dpia-best-practices-for-ai-systems/">Conducting a DPIA: Best Practices for AI Systems. </a>2024</li>
+          <li id="cite_19">Anthropic. <a href="https://www.anthropic.com/legal/consumer-terms">Consumer Terms of Service</a></li>
+          <li id="cite_20">OpenAI. <a href="https://openai.com/policies/eu-terms-of-use/">Europe Terms of Use</a></li>
+          <li id="cite_21">Chandrasekhar R. <a href="https://odeco-research.eu/?p=4064">Open data licenses and use restrictions - ODECO. </a>2024</li>
+          <li id="cite_22">Buick A. Copyright and AI training data—transparency to the rescue? J Intellect Prop Law Pract. 2025;20(3):182-92. doi: <a href="https://doi.org/10.1093/jiplp/jpae102">10.1093/jiplp/jpae102</a></li>
+          <li id="cite_23">Davison RM, Chughtai H, Nielsen P, Marabelli M, Iannacci F, van Offenbeek M, et al. The ethics of using generative AI for qualitative data analysis. Inf Syst J. 2024;34(5):1433-9. doi: <a href="https://doi.org/10.1111/isj.12504">10.1111/isj.12504</a></li>
+          <li id="cite_24">Thomas J, Flemyng E, Noel-Storr A. <a href="https://osf.io/fwaud/overview">Responsible use of AI in evidence SynthEsis (RAISE 2026) 1: Recommendations and guidance. </a>2026</li>
+          <li id="cite_25">Thomas J, Flemyng E, Noel-Storr A. <a href="https://osf.io/fwaud/overview"> Responsible use of AI in evidence SynthEsis (RAISE 2026) 3: Selecting and using AI evidence synthesis tools. </a>2026</li>
+        </ol>        
       </div>
     </div>
 
@@ -703,28 +741,42 @@ const AWARENESS_DATA = {
 
   /* Shown on every results page, regardless of selections */
   always: [
+        {
+      title: "Human oversight & accountability",
+      icon: "👤",
+      badge: "Core requirement",
+      badgeClass: "badge-info",
+      items: [
+          "You are legally and ethically responsible for the accuracy and integrity of all your outputs, also those generated with the support of AI.<sup><a href=#references>[1]</a></sup>",
+          "Maintain a critical approach to AI outputs and keep meaningful oversight at all stages.<sup><a href=#references>[1]</a></sup>",
+          "Be aware of the AI tool's limitations, the possibility of bias, hallucinations and inaccuracies. Bias in AI outputs can arise from the model's skewed training data, or bias introduced by prompting. AI hallucinations can include invented citations and plausibly presented false information.<sup><a href=#references>[1][2][3]</a></sup>",
+          "Be careful not to rely on automated assessments or decisions by an AI tool about individuals without human evaluation.<sup><a href=#references>[4]</a></sup>",
+          "Make sure not to use AI tools for prohibited practices under the AI Act Article 5, such as AI systems that manipulate or mislead people into making decisions that may cause harm, for purposes of social scoring, for biometric categorisation of individuals or recognising emotions in workplace and education institutions.<sup><a href=#references>[5]</a></sup>",
+      ]
+    },
     {
       title: "Transparency & reproducibility",
       icon: "👁️",
       badge: "Research integrity",
       badgeClass: "badge-info",
       items: [
-        "Document all AI tools used, including model name, version, and the prompts you applied — treat this as part of your methods section.",
-        "Describe AI-assisted steps in your data management plan (DMP) and in any resulting publications.",
-        "AI outputs must be verifiable; never rely solely on AI-generated results without independent human validation.",
-        "Follow your institution's and funder's AI disclosure policies (e.g. Horizon Europe guidelines require explicit AI use statements)."
+        "Document all substantial use of AI tools in your research process. When AI models shape the results, the use of AI should be mentioned in the methods section of your publication.<sup><a href=#references>[1]</a></sup>",
+        "Many publishers/journals have developed detailed authors' guidelines for AI use in publications. Consult the guidelines of the journal/publisher you want to publish your manuscript at to clarify which AI use is allowed and how to document it. For example, Wiley offers a quite comprehensive author guidance for use of generative AI.<sup><a href=#references>[3]</a></sup>",
+        "When documenting AI use, specify how AI was used and affected the research process. Include the AI model name, version and date of use. You may include the prompts you applied for documentation purposes.<sup><a href=#references>[1]</a></sup>",
+        "Consider the stochastic nature of generative AI tools, i.e. the tendency to produce different output from the same input, which can impact reproducibility. Discuss any limitations resulting from AI use in your research process.<sup><a href=#references>[1]</a></sup>",
+        "Follow your institution's and funder's AI disclosure policies."
       ]
     },
     {
-      title: "Human oversight & accountability",
+      title: "General AI awareness",
       icon: "✅",
-      badge: "Core requirement",
+      badge: "Important",
       badgeClass: "badge-info",
       items: [
-        "Maintain meaningful human oversight at all stages — AI must support researcher judgment, not replace it.",
-        "You remain legally and ethically responsible for the accuracy and integrity of all outputs, including AI-generated ones.",
-        "Establish a clear review process before acting on AI-generated classifications, analyses, or recommendations.",
-        "Under the EU AI Act (2024), researchers using AI systems may be classified as 'deployers' with associated obligations, depending on the risk tier of the system."
+          "Review the AI tool's Terms of Use to make sure that the tool provider does not place restrictions on your ability to use your content or the outputs generated. The provider should explicitly state that it does not claim ownership or rights over your content.<sup><a href=#references>[3]</a></sup>",
+          "Review the AI tool's Privacy Policy to clarify how the data you provide (inputs and uploads) is used, where it is stored, and how it can be deleted. Check for how long deleted data is retained and any exceptions mentioned. The privacy options should let you opt out of further AI model training with data you provided via inputs/conversations.<sup><a href=#references>[3][6][7][8]</a></sup>",
+          "Always consider whether and which AI tool is best suited for the intended task and by using the most effective prompting techniques, in order to minimise environmental impact. In your prompt, be specific about the task the AI tool should perform, provide sufficient context and set limitations to format, style and length of the output. Keep in mind that the most effective prompting technique will vary according to task, and seek advice.<sup><a href=#references>[1]</a></sup>",
+          "Stay up to date on best practices for the use of generative AI, participate in training and share your knowledge with colleagues and stakeholders.<sup><a href=#references>[1]</a></sup>"
       ]
     }
   ],
@@ -732,46 +784,60 @@ const AWARENESS_DATA = {
   /* Triggered by the user's data type selection (Step 1) */
   dataTypes: {
 
-    personal: {
-      title: "Personal data — GDPR obligations",
-      icon: "👤",
-      badge: "High priority",
-      badgeClass: "badge-high",
-      items: [
-        "Inputting personal data into commercial AI systems may constitute a data transfer — verify your legal basis under GDPR Art. 6 before proceeding.",
-        "Confirm whether the AI provider acts as a data processor; if so, a Data Processing Agreement (DPA) is legally required.",
-        "Avoid entering directly identifiable data into AI tools unless strictly necessary — pseudonymise or anonymise first.",
-        "Assess whether a Data Protection Impact Assessment (DPIA) is required before starting AI-assisted processing.",
-        "Personal data must not be sent to AI systems hosted outside the EEA without adequate safeguards (GDPR Chapter V)."
-      ]
-    },
-
-    sensitive: {
-      title: "Special category data — GDPR Art. 9",
-      icon: "🔒",
-      badge: "Critical",
-      badgeClass: "badge-critical",
-      items: [
-        "Processing health, ethnic origin, religious, or biometric data requires an explicit legal basis under GDPR Art. 9 — not just a general basis.",
-        "This category of data must not be entered into AI tools without explicit written approval from your institution's Data Protection Officer (DPO).",
-        "A DPIA is almost always mandatory when processing special category data with AI tools.",
-        "Consider whether AI processing introduces discriminatory risk — document your risk assessment and mitigation measures.",
-        "Ethics committee approval may be required before any AI-assisted processing begins."
-      ]
-    },
-
-    research: {
+      collected: {
       title: "Research data governance",
       icon: "🔬",
       badge: "Important",
       badgeClass: "badge-high",
       items: [
-        "Research data shared with AI systems must comply with the scope of participant consent — check whether your consent forms cover AI-assisted processing.",
-        "Many legacy consent forms do not mention AI — if yours does not, seek ethics committee guidance before proceeding.",
-        "Follow FAIR principles: AI use should not compromise the Findability, Accessibility, Interoperability, or Reusability of your data.",
-        "Funder mandates (e.g. DFG, NWO, ERC) may have specific provisions on AI tool use — check your grant agreement."
+        "Research funders, publishers as well as your institution may have specific provisions on AI tool use. Check your grant agreement as well as relevant policies and guidelines.",
+        "Take measures to ensure data integrity and reproducibility whenever using AI tools for research data processing. Disclose any use of AI in the research process and describe in detail how AI was used, verify that no errors were introduced during data processing by AI and refrain from using AI to create or alter images representing observed or experimental data.<sup><a href=#references>[2][3][9]</a></sup>",
+        "For research projects involving human participants, you should obtain informed consent from the participants. This includes information about planned AI-assisted data processing. Contact your ethics committee for guidance.<sup><a href=#references>[10]</a></sup>",
+        "If any identifying information is collected or processed, a legal basis is required under the GDPR. Select “Personal data” on the first page for recommendations when handling personal information of research participants.<sup><a href=#references>[11]</a></sup>"
       ]
     },
+
+      public: {
+      title: "Publicly available data",
+      icon: "🌐",
+      badge: "Lower risk",
+      badgeClass: "badge-low",
+      items: [
+        "Verify that AI-assisted transformation or redistribution is permitted for the public data, as even open data may carry license conditions that restrict AI-assisted uses. Select 'Copyrighted / licenced data' on the first page for more information on license conditions.",
+        "Be aware that individuals may be reidentified by AI-assisted analysis of multiple public datasets, and assess the aggregation risk. For example, a specific person may be identified by combining an anonymised dataset with other publicly available data, such as consensus data, geographical data, information from social media platforms or pseudonymous online profiles. Large language models, especially with agentic capabilities, dramatically reduces the effort necessary to reidentify individuals. <sup><a href=#references>[12][13]</a></sup>",
+        "Ensure fully documented data provenance by citing original sources, also when AI helps you process or summarise them.<sup><a href=#references>[1][3]</a></sup>"
+      ]
+    },
+
+    personal: {
+      title: "Personal data",
+      icon: "👤",
+      badge: "High priority",
+      badgeClass: "badge-high",
+      items: [
+        "Avoid entering directly identifiable data into AI tools unless strictly necessary. If possible, pseudonymise or anonymise personal data first.<sup><a href=#references>[3]</a></sup>",
+        "Photographs with identifiable individuals are especially sensitive and should not be provided to third-party AI services in order to protect research participants.<sup><a href=#references>[3]</a></sup>",
+        "Do not to provide personal data to a third-party AI service without a legal basis under GDPR Article 6, such as consent by the data subject (individual), a necessity for public interest or legitimate interest. Check whether your consent forms cover AI-assisted processing.<sup><a href=#references>[1][3][6][11]</a></sup>",
+        "Institutional versions of AI tools are closed environments that host a third-party tool with privacy guarantees. If available, you should always use an institutional AI tool instead of an externally hosted AI tool.<sup><a href=#references>[4][14][15][16]</a></sup>",
+        "Consider carefully where the data is transferred to and stored when processing personal data with the help of an AI tool (e.g. a large language model or software containing an AI assistant). Using AI services by companies residing outside the EEA usually leads to data transfer to servers outside of the EEA. Check if you have access to institutionally run third-party AI tools that run on servers within the EEA and have privacy guaranties, enabling their use for general personal data.<sup><a href=#references>[6][14]</a></sup>",
+        "The transfer of personal data to countries outside the EEA is regulated by GDPR Chapter V, which requires adequate safeguards or an adequacy decision on the level of protection by the European Commission.<sup><a href=#references>[11]</a></sup>",
+        "Assess whether a Data Protection Impact Assessment (DPIA) under GDPR Article 35 is required before starting AI-assisted processing. Contact your Data Protection Officer (DPO) for advice.<sup><a href=#references>[11]</a></sup>",
+        "Generative AI outputs themselves can contain personal data, which has to be handled according to EU data protection rules.<sup><a href=#references>[1]</a></sup>"
+      ]
+    },
+
+    sensitive: {
+      title: "Sensitive data",
+      icon: "🔒",
+      badge: "Critical",
+      badgeClass: "badge-critical",
+      items: [
+        "Do not to provide sensitive data (e.g. health data, biometric data, ethnic origin, religious beliefs, sexual orientation, political opinions, trade union membership) to any generative AI tool, unless the tool is explicitly approved by the institution for this type of data.<sup><a href=#references>[14][15][16]</a></sup>",
+        "A Data Protection Impact Assessment (DPIA) is probably necessary when processing special category data with AI tools. Consider whether the processing of sensitive data with generative AI tools introduces discriminatory risk and document your risk assessment and mitigation measures. Consult with your institution's Data Protection Officer (DPO) and ethics committee before processing sensitive data with AI tools.<sup><a href=#references>[11][17][18]</a></sup>",
+        "All processing of sensitive data requires an explicit legal basis, such as explicit consent by the data subject (individual), to protect the data subject's vital interests or for reasons of substantial public interest. Consult GDPR Article 9 for an explanation of legal grounds for processing of special categories of personal data (sensitive data).<sup><a href=#references>[11]</a></sup>"
+      ]
+    },
+
 
     copyrighted: {
       title: "Copyright & intellectual property",
@@ -779,11 +845,12 @@ const AWARENESS_DATA = {
       badge: "Important",
       badgeClass: "badge-high",
       items: [
-        "Inputting copyrighted texts into AI systems for processing may implicate the EU Copyright Directive (2019/790).",
-        "Text and data mining (TDM) exceptions in EU law may apply to non-commercial research, but verify your specific use case and jurisdiction.",
-        "AI-generated outputs derived from copyrighted material may not themselves be protected by copyright — this affects authorship and IP ownership.",
-        "Check the licensing terms of any dataset: confirm whether AI-assisted transformation or redistribution is permitted.",
-        "Outputs from AI models trained on proprietary or restricted data may themselves carry licence restrictions."
+        "Be aware that the input to an AI tool, such as uploaded text, data, images and prompts, may be used for other purposes, such as training of AI models. Review the AI tool's Terms of Service to make sure that you can opt out of uploaded input being reused for AI model training.<sup><a href=#references>[10][14][19][20]</a></sup>",
+        "Before uploading copyrighted or licensed material (e.g. dataset/image/text) into an AI tool, you must ensure that you either own the copyright, have obtained the necessary permissions, or verify that AI-assisted transformation or redistribution is permitted according to the licensing terms.<sup><a href=#references>[4][14][15]</a></sup>",
+        "Be aware that license conditions for open data may restrict AI-assisted uses, e.g. by limitations to non-commercial use or 'Share Alike' obligations. This is especially relevant if uploaded data is used for further AI model training.<sup><a href=#references>[21][22]</a></sup>",
+        "Institutional versions of AI tools are closed environments that host a third-party tool with privacy guarantees, which restrict the reuse of uploaded data for other purposes. If available, you should always use an institutional AI tool instead of an externally hosted AI tool.<sup><a href=#references>[3][14]</a></sup>",
+        "Consult your research institution's AI guidelines to clarify permissible data use in AI tools. Upload of copyrighted material that the institution has access to may be permitted within the institutional AI tool.<sup><a href=#references>[14]</a></sup>",
+        "AI-generated outputs may be derived from copyrighted or restricted data and hence carry license restrictions. This results in a risk of copyright infringement and potential for plagiarism of text, code or images. Be sure to verify the sources of AI output and cite others' work appropriately.<sup><a href=#references>[1][3]</a></sup>"
       ]
     },
 
@@ -793,23 +860,8 @@ const AWARENESS_DATA = {
       badge: "Important",
       badgeClass: "badge-high",
       items: [
-        "Confidential or unpublished research data must not be entered into cloud-based AI systems without explicit institutional approval.",
-        "Many AI providers' terms of service allow use of submitted data for model training — review these carefully before use.",
-        "Use institutional or on-premise AI deployments where confidentiality is a requirement.",
-        "Notify your Data Protection Officer (DPO) or research data manager before processing confidential data with any external AI tool."
-      ]
-    },
-
-    public: {
-      title: "Publicly available data — residual risks",
-      icon: "🌐",
-      badge: "Lower risk",
-      badgeClass: "badge-low",
-      items: [
-        "Even public data may carry licence conditions (e.g. Creative Commons NC clauses) that restrict AI-assisted or commercial uses.",
-        "Web-scraped data may be subject to database rights or website terms of service that prohibit automated processing.",
-        "Combining multiple public datasets can re-identify individuals — assess aggregation risk before proceeding.",
-        "Ensure provenance is fully documented: cite original sources even when AI helps you process or summarise them."
+        "Do not upload confidential or unpublished research data to third-party AI tools without privacy guarantees and explicit institutional approval. Review the AI providers' Terms of Service carefully, as they may allow use of submitted data for model training. Notify your Data Protection Officer (DPO) before processing confidential data with any third-party AI tool.<sup><a href=#references>[1][4][14][16]</a></sup>",
+        "Use institutional versions of AI tools that guarantee privacy and a closed environment. Consult your research institution's AI guidelines to clarify permissible data use in AI tools.<sup><a href=#references>[4][14][16]</a></sup>"
       ]
     }
 
@@ -819,28 +871,30 @@ const AWARENESS_DATA = {
   useCases: {
 
     cleaning: {
-      title: "Data cleaning",
+      title: "Data cleaning and preparation",
       icon: "🧹",
       badge: "Accuracy risk",
       badgeClass: "badge-high",
       items: [
-        "AI may silently introduce errors during formatting or correction — always compare AI-cleaned data against the original using a diff or audit log.",
-        "Avoid passing personal identifiers to AI for deduplication; use surrogate keys or anonymised representations where possible.",
-        "Document all cleaning rules and transformations applied by AI in your data provenance record.",
-        "AI imputation of missing values must be clearly flagged in your dataset — never treat imputed values as observed data."
+        "Use AI tools approved by your institution for handling personal data to transcribe recordings of research material (e.g. interviews, workshops or focus groups). Always review and revise the generated transcripts.<sup><a href=#references>[14][15]</a></sup>",
+        "Compare AI-cleaned data against the original data to ensure that no errors have been introduced, and document all steps and rules for data cleaning and transformations applied by the AI tool.",
+        "Avoid entering personal identifiers into an AI tool for data cleaning. If possible, anonymise your data before processing with an AI tool. Institutional AI tools with privacy guarantees may be used to replace personal identifiers with anonymised representations (check institutional guides and policies).<sup><a href=#references>[3]</a></sup>",
+        "Check whether your chosen journal/publisher requires disclosure of AI use for data cleaning."
       ]
     },
 
     classification: {
-      title: "Classification & coding",
+      title: "Classification & text coding",
       icon: "🏷️",
       badge: "Bias risk",
       badgeClass: "badge-high",
       items: [
-        "AI classifiers may reflect biases present in their training data — validate outputs across diverse demographic subgroups.",
-        "Report inter-rater reliability between AI and human coders; document disagreements and how they were resolved.",
-        "Classification schemes applied by AI must be reproducible — save and version your prompts as part of your methods.",
-        "Do not use AI to classify special category attributes (e.g. ethnicity, health status) without prior ethics committee approval."
+        "When using AI tools to classify qualitative data and developing codes, be aware that AI may reflect and reinforce existing biases present in the training data, such as stereotypes, prejudice or negative sentiment towards certain groups, based on e.g. race, gender, culture or background. Always validate outputs across diverse demographic groups.<sup><a href=#references>[23]</a></sup>",
+        "Do not use AI tools to classify special categories of personal data (e.g. ethnicity, political views, health information) without prior approval of the ethics committee and appropriate safeguards for data protection. Select “Sensitive data” on the first page for recommendations when handling sensitive information of research participants.<sup><a href=#references>[6]</a></sup>",
+        "Avoid entering personal identifiers into an AI tool. Whenever possible, anonymise your data before further processing. Institutional AI tools with privacy guarantees may be used to replace personal identifiers with pseudonyms/anonymised representations (check institutional guides and policies).<sup><a href=#references>[3][6]</a></sup>",
+        "Disclose the use of AI for coding of interview or textual data, creating themes or identifying patterns in large datasets in your methods.<sup><a href=#references>[3]</a></sup>",
+        "Save and version your prompts used for AI classification/coding as part of your methods to aid transparency and reproducibility.<sup><a href=#references>[6]</a></sup>",
+        "You should develop a validation strategy or plan to verify results as part of your methods. Assess and report the degree of agreement in coding decisions between AI and human coders, and document disagreements and how they were resolved.<sup><a href=#references>[6]</a></sup>"
       ]
     },
 
@@ -850,23 +904,29 @@ const AWARENESS_DATA = {
       badge: "Validity risk",
       badgeClass: "badge-high",
       items: [
-        "AI-identified patterns are hypotheses to investigate, not confirmed findings — validate them with appropriate statistical methods.",
-        "AI models can hallucinate statistical results; never report numeric outputs without independent verification against raw data.",
-        "Be explicit about AI's role in analysis in any publication — vague attribution inflates apparent methodological rigour.",
-        "Consider whether AI-assisted analysis constitutes automated decision-making under GDPR Art. 22 in applied or clinical contexts."
+        "If you use AI tools to assist in data exploration and statistical analysis, always verify AI-generated numeric outputs/statistics and patterns identified by AI tools and validate them with appropriate statistical methods.<sup><a href=#references>[3]</a></sup>",
+        "If you use an AI tool to assist with data extraction, measure and document extraction errors (including hallucinations, incorrect vales, missing data) and evaluate the AI tool's impact on research validity. (Thomas et al., 2026b)",
+        "When submitting a manuscript to a journal/publisher, declare the use of AI tools in your method section and specify how AI was used for data analysis, e.g. for script generation, data pipeline design, modeling, software development, qualitative/quantitative analysis, data exploration or synthesis. Consult the specific journal's/publisher's guidelines for AI use, as the permitted practices for AI use and rules for disclosure may vary.<sup><a href=#references>[3]</a></sup>",
+        "When creating and editing figures with AI tools based on your data (charts, graphs, heat maps, plots, statistical figures), always verify the graphic output against the data and statistics. Consider whether the same result can be achieved with a less resource-intensive software than AI.<sup><a href=#references>[3]</a></sup>",
+        "Be aware that not all publishers/journals may accept images generated or edited with AI tools, so you need to consult the specific journal's/publisher's guidelines for AI use before submitting your work.",
+        "If your chosen publisher/journal accepts AI use for images/figures, you still need to declare in detail how AI was used, e.g. to generate data visualisations, research illustrations (workflow diagrams, flowcharts, experimental setups). When AI is used to generate or edits any visual content, include a declaration in the figure caption.<sup><a href=#references>[3]</a></sup>",
+        "As a rule, publishers will not accept AI-edited photographs for publication. AI-assisted photograph analysis may still be used as part of your research methodology, but has to be disclosed.<sup><a href=#references>[2][3][9]</a></sup>"
       ]
     },
 
-    synthesis: {
-      title: "Summarisation & synthesis",
-      icon: "📄",
+    review: {
+      title: "Literature review",
+      icon: "📚",
       badge: "Accuracy risk",
       badgeClass: "badge-high",
       items: [
-        "AI summaries may omit nuance, minority findings, or contradictory evidence — cross-check against the original source material.",
-        "Never submit AI-generated literature summaries in grant applications or publications without full human review and revision.",
-        "Hallucinated citations are a documented and common risk — verify every reference produced or suggested by AI individually.",
-        "For systematic reviews, disclose AI assistance per PRISMA-AI or equivalent reporting guidelines."
+        "Carefully consider which AI tool is best suited for literature review assistance. The use of generative large language models (Chat GPT, Gemini, Claude, etc.) introduces the risk of hallucinated citations. Always cross-check summaries provided by AI tools against the original source and verify every reference individually.<sup><a href=#references>[1][24]</a></sup>",
+        "AI-supported tools specifically developed for literature search, which use research bibliographic databases as a source (Elicit, Undermind, etc.), mitigate the problem of hallucinated citations. However, these tools rarely provide a comprehensive search result and are best suited as a supplementary approach.<sup><a href=#references>[25]</a></sup>",
+        "If you use agentic search, in which an AI tool independently generates or executes search strategies for a literature review or systematic review, review and document the process carefully and disclose this use of AI in your methods. Be sure to clarify in advance if agentic search is permitted at your institution, and under which conditions.<sup><a href=#references>[3]</a></sup>",
+        "Always consider the AI tool's limitations by its training data as well as prompt bias. The model may not reliably correct its own bias and may omit nuance, minority findings, or contradictory evidence in it's output. Some regions and cultural perspectives may be overrepresented in the training data, while the perspective of others may be omitted.<sup><a href=#references>[1][3]</a></sup>",
+        "Be aware that the output of generative AI is affected by the cutoff date for the model.  The most recent publications may be missing in the AI output, and open access literature may be overrepresented. Always supplement AI-assisted searches with current database queries.<sup><a href=#references>[3]</a></sup>",
+        "When using AI tools for synthesis (theme identification, generation of comparative insights across multiple papers), review and revise the output critically and disclose this use of AI in your methods.<sup><a href=#references>[3]</a></sup>",
+        "If you use AI tools to assist screening and selection of studies, whether by using AI-supported screening tools of systematic review platforms (e.g. DistillerSR, Covidence, EPPI Reviewer, Abstrackr, Rayyan) or generative large language models (LLMs), disclose this AI use in your methods and verify the studies selected by AI against the selection criteria. When using an LLM, document the inclusion/exclusion criteria provided to the AI and record the full prompt text and how it was developed and evaluated.<sup><a href=#references>[3][25]</a></sup>"
       ]
     },
 
@@ -876,53 +936,26 @@ const AWARENESS_DATA = {
       badge: "Integrity risk",
       badgeClass: "badge-high",
       items: [
-        "Do not submit AI-generated text as your own without disclosure — check your institution's academic integrity and misconduct policy.",
-        "AI writing tools must not be listed as authors; authorship requires accountability and the ability to defend the work (ICMJE guidelines).",
-        "Avoid entering confidential or personal data into writing assistants as context — use anonymised placeholders instead.",
-        "AI-translated text should always be reviewed by a human fluent in the target language before dissemination.",
-        "Many journals and funders now require explicit AI use disclosure in manuscript submissions — check the submission guidelines."
+        "Do not submit AI-generated text as your own without disclosure. Review your institution's policy for academic integrity and misconduct for details.",
+        "Anonymise your data before processing with an AI tool to avoid entering confidential or personal data. Institutional AI tools with privacy guarantees may be used for handling personal/confidential data (check institutional guides and policies).<sup><a href=#references>[3]</a></sup>",
+        "Review any text generated by an AI tool for accuracy and reliability, to correct errors and detect nuances in language that an AI model may not be able to account for. Be aware that AI text generation and translation may introduce bias present in the model's training data, e.g. cultural and gender stereotypes. Translations should always be reviewed by a human fluent in the target language before dissemination.<sup><a href=#references>[3][9][23]</a></sup>",
+        "Disclose the use of AI tools in manuscript preparation. For example, disclose in the acknowledgements that AI assisted with manuscript drafting, editing, translation, or formatting. Consult the specific journal's/publisher's guidelines for AI use, as the permitted practices for AI use and rules for disclosure may vary.<sup><a href=#references>[3]</a></sup>",
+        "AI systems cannot be credited as authors or co-authors, as they lack accountability.<sup><a href=#references>[1]</a></sup>"
       ]
     },
 
-    generation: {
-      title: "Synthetic data generation",
-      icon: "✨",
-      badge: "High scrutiny",
-      badgeClass: "badge-critical",
-      items: [
-        "Synthetic data derived from personal data is still subject to GDPR unless you can demonstrate that re-identification risk is negligible.",
-        "Validate that synthetic datasets preserve the statistical properties relevant to your research question before using them.",
-        "Label all synthetic data clearly in datasets and publications — never mix synthetic and real observations without explicit distinction.",
-        "AI-generated data used in further model training can amplify existing biases — test for distributional shift.",
-        "Under the EU AI Act, using synthetic data in high-risk AI systems may trigger additional conformity assessment requirements."
-      ]
-    },
-
-    extraction: {
-      title: "Information extraction",
+    peer: {
+      title: "Peer review",
       icon: "🔍",
-      badge: "Accuracy risk",
+      badge: "Integrity risk",
       badgeClass: "badge-high",
       items: [
-        "Extracting named entities (names, locations, relationships) from personal documents requires a valid GDPR legal basis.",
-        "Measure and report AI extraction error rates — precision and recall matter for downstream research validity.",
-        "Extracted personal information must be stored and handled with the same protections as the source documents.",
-        "Domain-specific terminology can confuse general-purpose extraction models — validate on a manually annotated test set."
+        "Avoid using generative AI tools substantially in peer review activities, to eliminate risks of unfair treatment or assessment due to possible bias within the AI tool.<sup><a href=#references>[1][2][3][9]</a></sup>",
+        "An author's unpublished work is classified as confidential and should not be uploaded to a generative AI tool, in order to protect it from reuse such as training of AI models.<sup><a href=#references>[2][3][9]</a></sup>",
+        "Consider carefully how you use AI tools to support your decisions in peer review and check the AI tool's Terms of Service to guarantee protection of author's rights.<sup><a href=#references>[2][3][9]</a></sup>"
       ]
     },
 
-    search: {
-      title: "Literature & knowledge search",
-      icon: "📚",
-      badge: "Reliability risk",
-      badgeClass: "badge-info",
-      items: [
-        "AI-assisted screening does not replace a systematic search strategy — document your search terms and inclusion criteria explicitly.",
-        "AI tools have training data cutoff dates; always supplement AI-assisted searches with current database queries (e.g. PubMed, Scopus).",
-        "AI recommendations may reflect popularity or citation bias rather than relevance — apply independent critical appraisal.",
-        "When AI is used in systematic reviews or meta-analyses, report this using PRISMA-AI or equivalent standards."
-      ]
-    }
 
   } /* end useCases */
 
@@ -1059,15 +1092,14 @@ function buildResults() {
 
   // Labels for display (maps data-val to a readable name)
   const dataLabels = {
+    collected: 'Newly collected data', public: 'Public data',
     personal: 'Personal data', sensitive: 'Sensitive data',
-    research: 'Research data', copyrighted: 'Copyrighted material',
-    confidential: 'Confidential data', public: 'Public data'
+    copyrighted: 'Copyrighted material', confidential: 'Confidential data' 
   };
   const useLabels = {
     cleaning: 'Data cleaning', classification: 'Classification',
-    analysis: 'Data analysis', synthesis: 'Summarisation',
-    writing: 'Writing', generation: 'Synthetic data',
-    extraction: 'Extraction', search: 'Literature search'
+    analysis: 'Data analysis', review: 'Literature review',
+    writing: 'Writing', peer: 'Peer review'
   };
 
   state.dataTypes.forEach(val => {
