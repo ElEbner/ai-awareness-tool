@@ -1,4 +1,7 @@
 # ai-awareness-tool
+
+[![DOI](https://zenodo.org/badge/1293670354.svg)](https://doi.org/10.5281/zenodo.23498081)
+
 A simple HTML based tool for raising awareness on data protection, legal and ethic issues when using AI tools for research data processing.
 
 The user is asked to answer two questions about the data types in a research project and the intended tasks for data processing. Based on these, recommendations (awareness points) for the selected data types and use cases are presented, with reference to relevant guidelines from publishers, Norwegian research institutions and the European Commission, as well as to European law and research ethics frameworks.
