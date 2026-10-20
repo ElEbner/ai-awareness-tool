@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Ebner"
+  given-names: "Elisabeth"
+title: "AI awareness tool for research data"
+version: 1.0.0
+doi: 10.5281/zenodo.23498081
+date-released: 2026-10-20
+url: "https://github.com/ElEbner/ai-awareness-tool"
